@@ -33,23 +33,75 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
     if (!existingOnSocket) {
       this.activeSockets.push({ room: link, id: client.id, userId })
 
-      const dto = {
-        link,
-        userId,
-        x: 2,
-        y: 2,
-        orientation: 'down'
-      } as UpdatePositionDto
+      // select active users
+      const activeUsers = (await this.service.listUsersPositionByLink(link)).filter(activeUser => activeUser.active === true);
 
-      await this.service.updateUserPosition(client.id, dto)
-      const users = await this.service.listUsersPositionByLink(link);
+      //Take the positions ocupied for the users in a list of objects like: [{x:1,y:3},{x:2,y:2}]
+      const ocupiedPositions = activeUsers.map(user => ({ x: user.x, y: user.y }))
 
-      this.wss.emit(`${link}-update-user-list`, { users });
-      client.broadcast.emit(`${link}-add-user`, { user: client.id })
+      //Search if the new user had alredy entry before in this meeting:
+      const userEntryBefore = (await this.service.listUsersPositionByLink(link)).find(user => user.user.toString() === userId)
+
+      if (userEntryBefore && !ocupiedPositions.find(p => (userEntryBefore.x == p.x && userEntryBefore.y == p.y))) {
+        const dto = {
+          link,
+          userId,
+          x: userEntryBefore.x,
+          y: userEntryBefore.y,
+          orientation: userEntryBefore.orientation,
+          active: true
+        } as UpdatePositionDto
+
+        await this.service.updateUserPosition(client.id, dto)
+        const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
+
+        this.wss.emit(`${link}-update-user-list`, { users });
+        client.broadcast.emit(`${link}-add-user`, { user: client.id })
+        return;
+
+      } else {
+
+        //Search for the new vacant position 
+        //(if prefers complet map by lines insted coluns invert for x with for y)
+
+        for (let X = 1; X <= 8; X++) {
+          for (let Y = 1; Y <= 8; Y++) {
+
+            // look if atual position is free
+            const position = ocupiedPositions.find(p => (X == p.x && Y == p.y))
+
+            // Set new user position to the free position
+            if (!position) {
+              //this.logger.debug(`found position x: ${X} and y:${Y}`)
+
+              const dto = {
+                link,
+                userId,
+                x: X,
+                y: Y,
+                orientation: 'down',
+                active: true
+              } as UpdatePositionDto
+
+              await this.service.updateUserPosition(client.id, dto)
+              const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
+
+              this.wss.emit(`${link}-update-user-list`, { users });
+              client.broadcast.emit(`${link}-add-user`, { user: client.id })
+
+              // finish the for loops
+              return;
+            }
+          }
+        }
+      }
+
+
     }
     this.logger.debug(`Socket client: ${client.id} start to join room ${link}`)
 
   }
+
 
   @SubscribeMessage('move')
   async handleMove(client: Socket, payload: UpdatePositionDto): Promise<void> {
@@ -62,22 +114,67 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
       userId,
       x,
       y,
-      orientation
+      orientation,
     } as UpdatePositionDto;
 
     await this.service.updateUserPosition(client.id, dto);
-    const users = await this.service.listUsersPositionByLink(link);
+    const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
     this.wss.emit(`${link}-update-user-list`, { users });
   }
+
+
   @SubscribeMessage('toggl-mute-user')
   async handleToggleMute(client: Socket, payload: ToggleMuteDto,): Promise<void> {
-    const { link, userId } = payload;
+    const { link } = payload;
 
 
     await this.service.updateUserMute(payload);
     const users = await this.service.listUsersPositionByLink(link);
     this.wss.emit(`${link}-update-user-list`, { users });
   }
+
+
+
+
+
+  async handleDisconnect(client: any) {
+
+    const existingOnSocket = this.activeSockets.find(
+      socket => socket.id === client.id
+    );
+
+    if (!existingOnSocket) return;
+
+    //find user who will be deleted
+    const userDisconnecting = (await this.service.listUsersPositionByLink(existingOnSocket.room)).find(u => u.user.toString() === existingOnSocket.userId)
+
+    //adding to dto user data and change active status
+    const dto = {
+      link: existingOnSocket.room,
+      userId: existingOnSocket.userId,
+      x: userDisconnecting.x,
+      y: userDisconnecting.x,
+      orientation: userDisconnecting.orientation,
+      active: false
+    } as UpdatePositionDto
+
+    // updating active status of  in position
+    await this.service.updateUserPosition(client.id, dto);
+
+    // taking out of active sockets
+    this.activeSockets = this.activeSockets.filter(
+      socket => socket.id !== client.id);
+
+
+    const users = (await this.service.listUsersPositionByLink(dto.link)).filter(user => user.active === true);
+
+    //do I need this emit?
+    //this.wss.emit(`${existingOnSocket.room}-update-user-list`, { users });
+    client.broadcast.emit(`${dto.link}-remove-user`, { socketId: client.id })
+    this.logger.debug(`Client: ${client.id} disconnected`)
+  }
+
+
 
   @SubscribeMessage('call-user')
   public callUser(client: Socket, data: any): void {
@@ -96,23 +193,6 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
       socket: client.id,
     });
   }
-
-  async handleDisconnect(client: any) {
-    const existingOnSocket = this.activeSockets.find(
-      socket => socket.id === client.id
-    );
-
-    if (!existingOnSocket) return;
-
-    this.activeSockets = this.activeSockets.filter(
-      socket => socket.id !== client.id);
-
-    await this.service.deleteUserPosition(client.id)
-
-    client.broadcast.emit(`${existingOnSocket.room}-remove-user`, { socketId: client.id })
-    this.logger.debug(`Client: ${client.id} disconnected`)
-  }
-
 
   afterInit(server: any) {
     this.logger.log('Gateway initialized')
