@@ -41,7 +41,7 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
         orientation: 'down'
       } as UpdatePositionDto
 
-      await this.service.updateUserPosition(userId, link, client.id, dto)
+      await this.service.updateUserPosition(client.id, dto)
       const users = await this.service.listUsersPositionByLink(link);
 
       this.wss.emit(`${link}-update-user-list`, { users });
@@ -52,34 +52,64 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('move')
-  async handleMove(client: Socket, payload: UpdatePositionDto, link, userId): Promise<void> {
-    
-    const { x, y, orientation } = payload;
+  async handleMove(client: Socket, payload: UpdatePositionDto): Promise<void> {
+
+    const { link, userId, x, y, orientation } = payload;
     this.logger.log('Socket client: ' + client.id + ' start to join room: ' + link);
 
     const dto = {
+      link,
+      userId,
       x,
       y,
       orientation
     } as UpdatePositionDto;
 
-    await this.service.updateUserPosition(userId, link, client.id, dto);
+    await this.service.updateUserPosition(client.id, dto);
     const users = await this.service.listUsersPositionByLink(link);
-    this.wss.emit(`${link}-update-user-list`, {users });
+    this.wss.emit(`${link}-update-user-list`, { users });
   }
-  @SubscribeMessage('toggle-mute-user')
-  async handleToggleMute(client: Socket, payload: ToggleMuteDto, link, userId): Promise<void> {
-    
-    
-    
+  @SubscribeMessage('toggl-mute-user')
+  async handleToggleMute(client: Socket, payload: ToggleMuteDto,): Promise<void> {
+    const { link, userId } = payload;
 
-    await this.service.updateUserMute(userId,link,payload);
+
+    await this.service.updateUserMute(payload);
     const users = await this.service.listUsersPositionByLink(link);
-    this.wss.emit(`${link}-update-user-list`, {users });
+    this.wss.emit(`${link}-update-user-list`, { users });
   }
 
+  @SubscribeMessage('call-user')
+  public callUser(client: Socket, data: any): void {
+    this.logger.log('Socket callUser: ' + client.id + ' to: ' + data.to);
+    client.to(data.to).emit('call-made', {
+      offer: data.offer,
+      socket: client.id,
+    });
+  }
 
-  handleDisconnect(client: any) {
+  @SubscribeMessage('make-answer')
+  public makeAnswer(client: Socket, data: any): void {
+    this.logger.log('Socket makeAnswer: ' + client.id + ' to: ' + data.to);
+    client.to(data.to).emit('answer-made', {
+      answer: data.answer,
+      socket: client.id,
+    });
+  }
+
+  async handleDisconnect(client: any) {
+    const existingOnSocket = this.activeSockets.find(
+      socket => socket.id === client.id
+    );
+
+    if (!existingOnSocket) return;
+
+    this.activeSockets = this.activeSockets.filter(
+      socket => socket.id !== client.id);
+
+    await this.service.deleteUserPosition(client.id)
+
+    client.broadcast.emit(`${existingOnSocket.room}-remove-user`, { socketId: client.id })
     this.logger.debug(`Client: ${client.id} disconnected`)
   }
 

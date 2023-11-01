@@ -21,6 +21,8 @@ export class Position {
 
     @Prop({ required: true })
     clientId: string;
+    
+    @Prop({ required: true })
     x: number;
 
     @Prop({ required: true })

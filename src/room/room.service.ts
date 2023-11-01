@@ -47,11 +47,11 @@ export class RoomService {
         await this.positionModel.deleteMany({ clientId });
     }
 
-    async updateUserPosition(userId: string, link: string, clientId: string, dto: UpdatePositionDto) {
-        this.logger.debug(`updateUserPosition - ${link}`);
+    async updateUserPosition(clientId: string, dto: UpdatePositionDto) {
+        this.logger.debug(`updateUserPosition - ${dto.link}`);
 
-        const meet = await this._getMeet(link);
-        const user = await this.userService.getUserById(userId);
+        const meet = await this._getMeet(dto.link);
+        const user = await this.userService.getUserById(dto.userId);
 
         if (!meet) {
             throw new BadRequestException(RoomMessageHelper.JOIN_LINK_NOT_VALID);
@@ -89,10 +89,10 @@ export class RoomService {
         }
     }
 
-    async updateUserMute(userId: string, link: string,dto: ToggleMuteDto) {
-        this.logger.debug(`updateUserMute - ${link} - ${userId}`);
-        const meet = await this._getMeet(link);
-        const user = await this.userService.getUserById(userId);
+    async updateUserMute(dto: ToggleMuteDto) {
+        this.logger.debug(`updateUserMute - ${dto.link} - ${dto.userId}`);
+        const meet = await this._getMeet(dto.link);
+        const user = await this.userService.getUserById(dto.userId);
         await this.positionModel.updateMany({ user, meet }, { muted: dto.muted });
     }
 
