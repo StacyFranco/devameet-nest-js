@@ -8,6 +8,7 @@ import { generateLink } from './helpers/linkGenerator.helper';
 import { MeetObject, MeetObjectDocument } from './schemas/meetObject.schema';
 import { UpdateMeetDto } from './dtos/updateMeet.dto';
 import { MeetMessagesHelper } from './helpers/meetMessages.helper';
+import { Position, PositionDocument } from 'src/room/schemas/position.schema';
 
 @Injectable()
 export class MeetService {
@@ -16,7 +17,8 @@ export class MeetService {
     constructor(
         @InjectModel(Meet.name) private readonly model: Model<MeetDocument>,
         @InjectModel(MeetObject.name) private readonly objectModel: Model<MeetObjectDocument>,
-        private readonly userService: UserService
+        @InjectModel(Position.name) private readonly positionModel: Model<PositionDocument>,
+        private readonly userService: UserService,
     ) { }
 
     async getMeetByUser(userId: string) {
@@ -43,6 +45,8 @@ export class MeetService {
 
     async deleteMeetByUser(userId: string, meetId: string) {
         this.logger.debug(`deleteMeetByUser - ${userId} - ${meetId}`)
+        //deleting the positions on the scheet to not acumulate!
+        await this.positionModel.deleteMany({meet: meetId})
         return await this.model.deleteOne({ user: userId, _id: meetId });
     }
 
