@@ -198,8 +198,6 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
 
     const users = (await this.service.listUsersPositionByLink(dto.link)).filter(user => user.active === true);
 
-    //do I need this emit?
-    //this.wss.emit(`${existingOnSocket.room}-update-user-list`, { users });
     client.broadcast.emit(`${dto.link}-remove-user`, { socketId: client.id })
     this.logger.debug(`Client: ${client.id} disconnected`)
   }
