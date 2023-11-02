@@ -42,7 +42,7 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
       //Search if the new user had alredy entry before in this meeting:
       const userEntryBefore = (await this.service.listUsersPositionByLink(link)).find(user => user.user.toString() === userId)
 
-      if (userEntryBefore && !ocupiedPositions.find(p => (userEntryBefore.x == p.x && userEntryBefore.y == p.y))) {
+      if (userEntryBefore && !ocupiedPositions.find(p => (userEntryBefore.x === p.x && userEntryBefore.y == p.y))) {
         const dto = {
           link,
           userId,
@@ -60,8 +60,38 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
         return;
 
       } else {
+        
+        //Search for the new vacant position in a random manner --------------------------------------------
+       
+        /*
+        const position = {x:2,y:2}; // initial position to start
+        while (ocupiedPositions.find(p=> p.x === position.x && p.y === position.y)){
+          position.x = (Math.floor(Math.random()*7))+1;
+          position.y = (Math.floor(Math.random()*7))+1;
+          this.logger.debug(`postion x: ${position.x} y: ${position.y}`)
+        }
 
-        //Search for the new vacant position 
+        const dto = {
+          link,
+          userId,
+          x: position.x,
+          y: position.y,
+          orientation: 'down',
+          active: true
+        } as UpdatePositionDto
+
+        await this.service.updateUserPosition(client.id, dto)
+        const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
+
+        this.wss.emit(`${link}-update-user-list`, { users });
+        client.broadcast.emit(`${link}-add-user`, { user: client.id })
+
+        // finish the for loops
+        return;
+        */
+
+
+        //Search for the new vacant position in a ordered manner -------------------------------------------------
         //(if prefers complet map by lines insted coluns invert for x with for y)
 
         for (let X = 1; X <= 8; X++) {
@@ -153,7 +183,7 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
       link: existingOnSocket.room,
       userId: existingOnSocket.userId,
       x: userDisconnecting.x,
-      y: userDisconnecting.x,
+      y: userDisconnecting.y,
       orientation: userDisconnecting.orientation,
       active: false
     } as UpdatePositionDto
