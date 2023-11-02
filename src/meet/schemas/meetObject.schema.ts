@@ -7,8 +7,8 @@ export type MeetObjectDocument = HydratedDocument<MeetObject>;
 @Schema()
 export class MeetObject{
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref:Meet.name})
-    meet:Meet;
+    //@Prop({type: mongoose.Schema.Types.ObjectId, ref:Meet.name})
+    //meet:Meet;
 
     @Prop({required: true})
     name:string;
@@ -22,7 +22,7 @@ export class MeetObject{
     @Prop({required: true})
     zIndex: number;
 
-    @Prop()
+    @Prop({})
     orientation: string;
 
 

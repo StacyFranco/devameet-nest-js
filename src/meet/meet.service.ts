@@ -50,12 +50,17 @@ export class MeetService {
         return await this.model.deleteOne({ user: userId, _id: meetId });
     }
 
+    // need to change way of searching and returnig data to not have a problem with the front-end
     async getMeetObjects(meetId: string, userId: string) {
         this.logger.debug(`GetMeetObjects - ${userId} - ${meetId}`)
         const user = await this.userService.getUserById(userId);
         const meet = await this.model.findOne({ user, _id: meetId });
 
-        return await this.objectModel.find({ meet });
+        
+      return meet.objects;
+      
+
+        //return await this.objectModel.find({ meet });
     }
 
     async updateMeet(meetId: string, userId: string, dto: UpdateMeetDto) {
@@ -70,17 +75,24 @@ export class MeetService {
         meet.color = dto.color;
         await this.model.findByIdAndUpdate({ _id: meetId }, meet);
 
-        await this.objectModel.deleteMany({ meet });
-
+       // using the same spreadsheet to meet and objects! 
+        meet.objects=dto.objects
+        //this.logger.debug(`object : ${meet.objects}`)
+        await this.model.findByIdAndUpdate({ _id: meetId }, meet);
+        
+        // using separeted sreadsheets for meet and objects
+      /*  await this.objectModel.deleteMany({ meet });
+        
         let ObjectPayload;
-
         for (const object of dto.objects) {
             ObjectPayload = {
                 meet,
                 ...object
             }
+            
             await this.objectModel.create(ObjectPayload);
         }
+        */
 
 
     }

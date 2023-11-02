@@ -24,7 +24,7 @@ export class RoomService {
         this.logger.debug(`getRoom - ${link}`);
 
         const meet = await this._getMeet(link);
-        const objects = await this.objectModel.find({ meet });
+        const objects = meet.objects;//await this.objectModel.find({ meet });
 
         return {
             link,

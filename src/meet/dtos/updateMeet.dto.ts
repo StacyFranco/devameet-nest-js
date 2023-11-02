@@ -12,7 +12,7 @@ export class UpdateMeetDto extends CreateMeetDto{
     objects: Array<UpdateMeetObjectDto>
 }
 
-export class UpdateMeetObjectDto{
+export class UpdateMeetObjectDto {
     @IsNotEmpty({ message: MeetMessagesHelper.UPDATE_OBJECT_NAME_NOT_VALID }) 
     name: string; 
     
