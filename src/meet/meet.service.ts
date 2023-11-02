@@ -50,16 +50,16 @@ export class MeetService {
         return await this.model.deleteOne({ user: userId, _id: meetId });
     }
 
-    // need to change way of searching and returnig data to not have a problem with the front-end
+   
     async getMeetObjects(meetId: string, userId: string) {
         this.logger.debug(`GetMeetObjects - ${userId} - ${meetId}`)
         const user = await this.userService.getUserById(userId);
         const meet = await this.model.findOne({ user, _id: meetId });
 
-        
+      //use whem meet has objects  
       return meet.objects;
       
-
+        // using whem have object scheet
         //return await this.objectModel.find({ meet });
     }
 
