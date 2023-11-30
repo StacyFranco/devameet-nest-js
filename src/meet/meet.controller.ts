@@ -37,6 +37,14 @@ export class MeetController {
         const { id } = params;
         await this.service.deleteMeetByUser(userId, id);
     }
+
+    @Get(':id')
+    async getMeetById(@Request() req,  @Param() params){
+        const { userId } = req?.user;
+        const { id } = params;
+
+        return await this.service.getMeetById(id, userId);
+    }
     
     @Get('objects/:id')
     async getObjectsByMeetId(@Param() params, @Request() req) {

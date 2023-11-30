@@ -53,10 +53,10 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
         } as UpdatePositionDto
 
         await this.service.updateUserPosition(client.id, dto)
-        const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
-
-        this.wss.emit(`${link}-update-user-list`, { users });
         client.broadcast.emit(`${link}-add-user`, { user: client.id })
+        
+        const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
+        this.wss.emit(`${link}-update-user-list`, { users });
         return;
 
       } else {
@@ -109,15 +109,15 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
                 userId,
                 x: X,
                 y: Y,
-                orientation: 'down',
+                orientation: 'front',
                 active: true
               } as UpdatePositionDto
 
               await this.service.updateUserPosition(client.id, dto)
-              const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
-
-              this.wss.emit(`${link}-update-user-list`, { users });
               client.broadcast.emit(`${link}-add-user`, { user: client.id })
+              
+              const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
+              this.wss.emit(`${link}-update-user-list`, { users });
 
               // finish the for loops
               return;
@@ -205,7 +205,7 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
 
 
   @SubscribeMessage('call-user')
-  public callUser(client: Socket, data: any): void {
+  async callUser(client: Socket, data: any) {
     this.logger.log('Socket callUser: ' + client.id + ' to: ' + data.to);
     client.to(data.to).emit('call-made', {
       offer: data.offer,
@@ -214,7 +214,7 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('make-answer')
-  public makeAnswer(client: Socket, data: any): void {
+  async makeAnswer(client: Socket, data: any){
     this.logger.log('Socket makeAnswer: ' + client.id + ' to: ' + data.to);
     client.to(data.to).emit('answer-made', {
       answer: data.answer,
