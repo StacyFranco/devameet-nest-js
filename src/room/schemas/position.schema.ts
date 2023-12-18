@@ -33,6 +33,9 @@ export class Position {
 
     @Prop({ default: false })
     muted: boolean;
+    
+    @Prop({ default: true })
+    cam: boolean;
 
     @Prop({ default: true })
     active: boolean;

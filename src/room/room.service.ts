@@ -8,6 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { RoomMessageHelper } from './helpers/roomMessages.helper';
 import { UpdatePositionDto } from './dtos/updatePosition.dto';
 import { ToggleMuteDto } from './dtos/toggleMute.dto';
+import { ToggleCamDto } from './dtos/toggleCam.dto';
 
 @Injectable()
 export class RoomService {
@@ -94,6 +95,13 @@ export class RoomService {
         const meet = await this._getMeet(dto.link);
         const user = await this.userService.getUserById(dto.userId);
         await this.positionModel.updateMany({ user, meet }, { muted: dto.muted });
+    }
+
+    async updateUserCam(dto: ToggleCamDto) {
+        this.logger.debug(`updateUserCam - ${dto.link} - ${dto.userId}`);
+        const meet = await this._getMeet(dto.link);
+        const user = await this.userService.getUserById(dto.userId);
+        await this.positionModel.updateMany({ user, meet }, { cam: dto.cam });
     }
 
 

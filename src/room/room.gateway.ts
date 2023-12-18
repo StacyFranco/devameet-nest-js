@@ -5,6 +5,7 @@ import { Server, Socket } from 'socket.io';
 import { JoinRoomDto } from './dtos/joinRoom.dto';
 import { UpdatePositionDto } from './dtos/updatePosition.dto';
 import { ToggleMuteDto } from './dtos/toggleMute.dto';
+import { ToggleCamDto } from './dtos/toggleCam.dto';
 
 type ActiveSocketType = {
   room: string;
@@ -53,10 +54,10 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
         } as UpdatePositionDto
 
         await this.service.updateUserPosition(client.id, dto)
-        client.broadcast.emit(`${link}-add-user`, { user: client.id })
         
         const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
         this.wss.emit(`${link}-update-user-list`, { users });
+        client.broadcast.emit(`${link}-add-user`, { user: client.id })
         return;
 
       } else {
@@ -114,10 +115,10 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
               } as UpdatePositionDto
 
               await this.service.updateUserPosition(client.id, dto)
-              client.broadcast.emit(`${link}-add-user`, { user: client.id })
               
               const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
               this.wss.emit(`${link}-update-user-list`, { users });
+              client.broadcast.emit(`${link}-add-user`, { user: client.id })
 
               // finish the for loops
               return;
@@ -159,7 +160,18 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
 
 
     await this.service.updateUserMute(payload);
-    const users = await this.service.listUsersPositionByLink(link);
+    const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
+    this.wss.emit(`${link}-update-user-list`, { users });
+  }
+
+
+  @SubscribeMessage('toggl-cam-user')
+  async handleToggleCam(client: Socket, payload: ToggleCamDto,): Promise<void> {
+    const { link } = payload;
+
+
+    await this.service.updateUserCam(payload);
+    const users = (await this.service.listUsersPositionByLink(link)).filter(user => user.active === true);
     this.wss.emit(`${link}-update-user-list`, { users });
   }
 
