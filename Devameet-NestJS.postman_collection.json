@@ -1,0 +1,382 @@
+{
+	"info": {
+		"_postman_id": "e64b14d1-8acd-433a-839c-f2dcabde82b3",
+		"name": "Devameet-NestJS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23220593"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiURL}}/api/user",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Devameet\",\r\n    \"avatar\":\"avatar_2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiURL}}/api/user",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Meet",
+			"item": [
+				{
+					"name": "Get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiURL}}/api/meet",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"meet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetObject",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiURL}}/api/meet/objects/654414610ea6eca8f8621a38",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"meet",
+								"objects",
+								"654414610ea6eca8f8621a38"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{apiURL}}/api/meet/6544063360d04802869a820d",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"meet",
+								"6544063360d04802869a820d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Alinhamento Devameet 4\",\r\n    \"color\":\"#fff333\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiURL}}/api/meet",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"meet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Alinhamento Devameet 4\",\r\n    \"color\":\"ffffff\",\r\n    \"objects\":[\r\n        {\r\n            \"name\":\"couch_03\",\r\n            \"x\":1,\r\n            \"y\":1,\r\n            \"zIndex\":1,\r\n            \"orientation\":\"down\"\r\n\r\n        },\r\n        {\r\n            \"name\":\"chair_02\",\r\n            \"x\":3,\r\n            \"y\":4,\r\n            \"zIndex\":1,\r\n            \"orientation\":\"left\"\r\n\r\n        },{\r\n            \"name\":\"floor_-01\",\r\n            \"x\":1,\r\n            \"y\":0,\r\n            \"zIndex\":0,\r\n            \"orientation\":\"\"\r\n\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiURL}}/api/meet/654414610ea6eca8f8621a38",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"meet",
+								"654414610ea6eca8f8621a38"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Room",
+			"item": [
+				{
+					"name": "Get",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenDevameet}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiURL}}/api/room/eya-hxas-crw",
+							"host": [
+								"{{apiURL}}"
+							],
+							"path": [
+								"api",
+								"room",
+								"eya-hxas-crw"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jasonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set('tokenDevameet',jasonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"login\":\"teste@teste.com\",\r\n    \"password\":\"Teste@1234\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiURL}}/api/auth/login",
+					"host": [
+						"{{apiURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"teste3\",\r\n    \"email\":\"teste3@teste.com\",\r\n    \"password\":\"Teste@1234\",\r\n    \"avatar\":\"avatar_3\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{apiURL}}/api/auth/register",
+					"host": [
+						"{{apiURL}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apiURL",
+			"value": "http://localhost:3333",
+			"type": "string"
+		},
+		{
+			"key": "tokenDevameet",
+			"value": ""
+		}
+	]
+}
