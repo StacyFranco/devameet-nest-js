@@ -1,12 +1,6 @@
 {
     "version": 2,
-    "env": {
-
-        "DATABASE_URL": "@DATABASE_URL",
-        "USER_CYPHER_SECRET_KEY":"@USER_CYPHER_SECRET_KEY",
-        "USER_JWT_SECRET_KEY":"@USER_JWT_SECRET_KEY",
-        "SERVER_PORT":"@SERVER_PORT"
-    },
+    
     "builds": [
         {
             "src": "src/main.ts",
