@@ -1,5 +1,5 @@
 import { IsNumber, Min, Max, IsString, IsBoolean, } from 'class-validator';
-import { MeetMessagesHelper } from 'src/meet/helpers/meetMessages.helper';
+import { MeetMessagesHelper } from '../../meet/helpers/meetMessages.helper';
 import { JoinRoomDto } from './joinRoom.dto';
 import { RoomMessageHelper } from '../helpers/roomMessages.helper';
 

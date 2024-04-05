@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable,Logger } from "@nestjs/common";
 import { LoginDto } from "./dtos/login.dto";
 import { MessageHelper } from "./helpers/messages.helper";
-import { RegisterDto } from "src/user/dtos/register.dto";
-import { UserService } from "src/user/user.service";
-import { UserMessagesHelper } from "src/user/helpers/message.helper";
+import { RegisterDto } from "../user/dtos/register.dto";
+import { UserService } from "../user/user.service";
+import { UserMessagesHelper } from "../user/helpers/message.helper";
 import {JwtService} from "@nestjs/jwt"
 
 @Injectable()

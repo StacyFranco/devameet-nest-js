@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose"
-import { Meet, MeetDocument } from 'src/meet/schemas/meet.schema';
-import { MeetObject, MeetObjectDocument } from 'src/meet/schemas/meetObject.schema';
+import { Meet, MeetDocument } from '../meet/schemas/meet.schema';
+import { MeetObject, MeetObjectDocument } from '../meet/schemas/meetObject.schema';
 import { Position, PositionDocument } from './schemas/position.schema';
 import { Model } from 'mongoose';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { RoomMessageHelper } from './helpers/roomMessages.helper';
 import { UpdatePositionDto } from './dtos/updatePosition.dto';
 import { ToggleMuteDto } from './dtos/toggleMute.dto';
