@@ -13,7 +13,12 @@ type ActiveSocketType = {
   userId: string;
 }
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({ cors: {
+  origin: ["https://devameet-nest-js.vercel.app"],
+  credentials: true,
+},
+transports: ['websocket', 'polling'],
+} )
 export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   constructor(private readonly service: RoomService) { }
