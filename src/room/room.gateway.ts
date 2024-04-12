@@ -13,7 +13,12 @@ type ActiveSocketType = {
   userId: string;
 }
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({ cors: {
+  origin: ["http://localhost:5173"],
+  credentials: true,
+},
+transports: ['websocket', 'polling'],
+} )
 export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   constructor(private readonly service: RoomService) { }
