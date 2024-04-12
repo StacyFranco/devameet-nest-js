@@ -14,7 +14,7 @@ type ActiveSocketType = {
 }
 
 @WebSocketGateway({ cors: {
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:3333"],
   credentials: true,
 },
 transports: ['websocket', 'polling'],
