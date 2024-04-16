@@ -9,7 +9,10 @@ async function bootstrap() {
 
   //Cors enable acess to the api from every place.
   //to be expecific place origin: www.example.com 
-  app.enableCors();
+  app.enableCors({
+    "origin": ["http://localhost:5173"],
+    "methods": ["GET","HEAD","PUT","POST","DELETE", "OPTIONS"]
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
